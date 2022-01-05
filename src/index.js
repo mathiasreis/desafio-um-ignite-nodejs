@@ -17,6 +17,12 @@ function checksExistsUserAccount(request, response, next) {
 app.post('/users', (request, response) => {
   const { name, username } = request.body;
 
+  const usernameAlreadyExists = users.some(user => user.username === username);
+
+  if (usernameAlreadyExists) {
+    return response.status(400).json({error: "Username already exists"});
+  }
+
   const id = uuidv4();
 
   const user = {
@@ -28,7 +34,7 @@ app.post('/users', (request, response) => {
 
   users.push(user);
 
-  return response.json(user);
+  return response.status(201).send(user);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
