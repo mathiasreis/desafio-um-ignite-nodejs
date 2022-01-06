@@ -88,7 +88,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  const { id, done } = request.params;
+  const { id } = request.params;
   const { user } = request;
 
   const todo = user.todos.find(todo => todo.id === id);
@@ -104,7 +104,18 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+  const { user } = request;
+
+  const todoIndex = user.todos.findIndex(todo => todo.id === id);
+
+  if (todoIndex == -1) {
+    return response.status(404).json({error: "Invalid todo id"})
+  }
+
+  user.todos.splice(todoIndex, 1);
+
+  return response.status(204).json(user.todos)
 });
 
 module.exports = app;
